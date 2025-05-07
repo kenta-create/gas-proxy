@@ -4,13 +4,17 @@ const fetch = require('node-fetch');
 
 const app = express();
 
-// 👇CORS対応（これを入れないとブラウザからのリクエストがブロックされます）
-app.use(cors());
+// ✅ どんなオリジンからでも受け付ける
+app.use(cors({
+  origin: '*',
+}));
+
+// ✅ JSONをパース
 app.use(express.json());
 
 app.post('/', async (req, res) => {
   try {
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbx4g6rnax9jDt4JQb2e-KPIyCuXeRe6OWJplL9lQAk70Ubee5r_IRILfFFFpf2aing7Bg/exec'; // ←差し替え忘れずに！
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbx4g6rnax9jDt4JQb2e-KPIyCuXeRe6OWJplL9lQAk70Ubee5r_IRILfFFFpf2aing7Bg/exec';
 
     const response = await fetch(gasUrl, {
       method: 'POST',
@@ -19,6 +23,7 @@ app.post('/', async (req, res) => {
     });
 
     const data = await response.json();
+    res.set('Access-Control-Allow-Origin', '*'); // ✅ 明示的に追加
     res.json(data);
   } catch (err) {
     console.error('エラー:', err);
@@ -27,4 +32,4 @@ app.post('/', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`サーバー起動中: ポート${PORT}`));
+app.listen(PORT, () => console.log(`✅ サーバー起動中: http://localhost:${PORT}`));
